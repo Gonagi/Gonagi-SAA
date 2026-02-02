@@ -51,6 +51,7 @@ gonagi-saa config init
 - **Anthropic API Key:** Claude 모델 사용 시 필요
 - **OpenAI API Key:** GPT 모델 사용 시 필요
 - **Google API Key:** Gemini 모델 사용 시 필요
+- **Imgur Client ID:** 이미지 업로드용 ([발급 방법](#imgur-client-id-발급))
 
 설정 파일 위치:
 ```bash
@@ -123,6 +124,29 @@ Notion 데이터베이스에 다음 필드가 필요합니다:
 
 - **title** (제목): 기본 제목 필드
 - **Tags** (다중 선택): AI가 추출한 태그 저장
+
+## 📸 Imgur Client ID 발급
+
+이미지를 Notion에 저장하려면 Imgur Client ID가 필요합니다.
+
+1. [Imgur 계정 생성](https://imgur.com/register) (이미 있다면 로그인)
+2. [Imgur API 등록 페이지](https://api.imgur.com/oauth2/addclient) 접속
+3. 애플리케이션 정보 입력:
+   - **Application name:** `gonagi-saa` (또는 원하는 이름)
+   - **Authorization type:** `OAuth 2 authorization without a callback URL` 선택
+   - **Email:** 본인 이메일
+   - **Description:** `AWS SAA study tool` (선택사항)
+4. Submit 클릭
+5. **Client ID** 복사 (Client Secret은 불필요)
+6. `gonagi-saa config init` 실행 시 입력
+
+### Imgur 이미지 업로드 정보
+
+- **Privacy:** Hidden (URL을 아는 사람만 접근, 검색 결과에 안 나옴)
+- **무료 제한:** 1일 12,500 요청 (개인 사용 충분)
+- **파일 크기:** 최대 10MB
+- **URL 보안:** 64자 랜덤 문자열로 추측 불가능
+- **저장 기간:** 영구 저장
 
 ## 📝 지원 모델
 
