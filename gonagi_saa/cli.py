@@ -69,6 +69,11 @@ def config_init():
         default="",
         show_default=False,
     )
+    imgur_client_id = typer.prompt(
+        "Imgur Client ID를 입력하세요 (이미지 업로드용)",
+        default="",
+        show_default=False,
+    )
 
     config_data = {
         "default_model": default_model,
@@ -77,6 +82,7 @@ def config_init():
         "anthropic_api_key": anthropic_api_key,
         "openai_api_key": openai_api_key,
         "google_api_key": google_api_key,
+        "imgur_client_id": imgur_client_id,
     }
 
     with open(CONFIG_FILE, "w") as f:
