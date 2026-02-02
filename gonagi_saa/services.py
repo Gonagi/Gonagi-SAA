@@ -9,7 +9,7 @@ from notion_client import Client as NotionClient
 from notionize import notionize
 
 from gonagi_saa.models import QnAModel
-from gonagi_saa.utils import llm_model_factory, prepare_image_content
+from gonagi_saa.utils import llm_model_factory, prepare_image_content, upload_image_to_imgur
 from gonagi_saa.settings import settings
 
 
@@ -95,29 +95,52 @@ def save_to_notion(
     # 마크다운 -> Notion 블록 변환
     children = notionize(content)
 
-    # 이미지 추가
+    # 이미지 업로드 및 추가
     if image_paths:
-        for image_path in image_paths:
-            path = Path(image_path)
-            if path.exists():
-                # Notion API는 외부 URL 또는 업로드된 파일을 지원
-                # 로컬 파일을 직접 업로드하려면 external URL로 변환하거나
-                # Notion의 file upload API 사용 필요
-                # 여기서는 간단히 텍스트로 경로 표시
-                children.append(
-                    {
-                        "object": "block",
-                        "type": "paragraph",
-                        "paragraph": {
-                            "rich_text": [
-                                {
-                                    "type": "text",
-                                    "text": {"content": f"📎 첨부 이미지: {path.name}"},
-                                }
-                            ]
-                        },
-                    }
-                )
+        imgur_client_id = settings.imgur_client_id.get_secret_value()
+
+        if not imgur_client_id:
+            print("⚠️  Imgur Client ID가 설정되지 않았습니다. 이미지를 건너뜁니다.")
+        else:
+            for image_path in image_paths:
+                path = Path(image_path)
+                if path.exists():
+                    try:
+                        print(f"📤 이미지를 Imgur에 업로드 중: {path.name}")
+                        # Imgur에 이미지 업로드 (Hidden 상태)
+                        image_url = upload_image_to_imgur(str(path), imgur_client_id)
+                        print(f"✅ 업로드 완료: {image_url}")
+
+                        # Notion image 블록 추가
+                        children.append(
+                            {
+                                "object": "block",
+                                "type": "image",
+                                "image": {
+                                    "type": "external",
+                                    "external": {"url": image_url},
+                                },
+                            }
+                        )
+                    except Exception as e:
+                        print(f"⚠️  이미지 업로드 실패 ({path.name}): {e}")
+                        # 실패 시 파일명만 텍스트로 기록
+                        children.append(
+                            {
+                                "object": "block",
+                                "type": "paragraph",
+                                "paragraph": {
+                                    "rich_text": [
+                                        {
+                                            "type": "text",
+                                            "text": {
+                                                "content": f"📎 첨부 이미지 (업로드 실패): {path.name}"
+                                            },
+                                        }
+                                    ]
+                                },
+                            }
+                        )
 
     # Notion 페이지 생성
     notion_client.pages.create(
