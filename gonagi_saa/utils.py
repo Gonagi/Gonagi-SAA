@@ -3,6 +3,7 @@ import base64
 from pathlib import Path
 from typing import Any
 
+import requests
 from langchain_openai import ChatOpenAI
 from langchain_anthropic import ChatAnthropic
 from langchain_google_genai import ChatGoogleGenerativeAI
@@ -94,3 +95,50 @@ def prepare_image_content(image_path: str) -> dict[str, Any]:
             "url": f"data:{mime_type};base64,{base64_image}"
         },
     }
+
+
+def upload_image_to_imgur(image_path: str, client_id: str) -> str:
+    """
+    이미지를 Imgur에 업로드하고 URL 반환
+
+    기본적으로 Hidden 상태로 업로드됨:
+    - URL을 아는 사람만 접근 가능
+    - Imgur 갤러리나 검색에 나오지 않음
+    - 실질적으로 비공개
+
+    Args:
+        image_path: 업로드할 이미지 파일 경로
+        client_id: Imgur Client ID
+
+    Returns:
+        업로드된 이미지의 URL
+
+    Raises:
+        FileNotFoundError: 이미지 파일을 찾을 수 없는 경우
+        requests.HTTPError: Imgur API 요청 실패
+    """
+    path = Path(image_path)
+    if not path.exists():
+        raise FileNotFoundError(f"이미지 파일을 찾을 수 없습니다: {image_path}")
+
+    # 이미지를 base64로 인코딩
+    with open(path, "rb") as image_file:
+        image_data = base64.b64encode(image_file.read()).decode("utf-8")
+
+    # Imgur API 요청
+    url = "https://api.imgur.com/3/image"
+    headers = {
+        "Authorization": f"Client-ID {client_id}"
+    }
+    data = {
+        "image": image_data,
+        "type": "base64",
+        # 기본값으로 hidden (URL을 아는 사람만 접근)
+    }
+
+    response = requests.post(url, headers=headers, data=data)
+    response.raise_for_status()
+
+    # 업로드된 이미지 URL 반환
+    result = response.json()
+    return result["data"]["link"]
