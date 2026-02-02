@@ -189,10 +189,6 @@ ruff format .
 pyright
 ```
 
-## 🙏 기여하기
-
-개선 사항이나 버그 리포트는 언제나 환영합니다. GitHub Issues를 통해 참여해주세요.
-
 ## 📄 라이선스
 
 [MIT License](LICENSE)
@@ -201,4 +197,4 @@ pyright
 
 ## 🔗 관련 프로젝트
 
-이 프로젝트는 [prepsaa](./prepsaa)를 기반으로 멀티모달 기능을 추가하여 재구성되었습니다.
+이 프로젝트는 [prepsaa](https://github.com/sjquant/prepsaa)를 기반으로 멀티모달 기능을 추가하여 재구성되었습니다.
