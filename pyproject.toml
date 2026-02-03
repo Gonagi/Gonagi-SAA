@@ -1,6 +1,6 @@
 [project]
 name = "gonagi-saa"
-version = "0.1.1"
+version = "0.1.2"
 description = "AWS SAA 시험 대비를 위한 멀티모달 Q&A CLI 도구"
 readme = "README.md"
 requires-python = ">=3.12"
