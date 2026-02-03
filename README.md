@@ -1,5 +1,9 @@
 # gonagi-saa
 
+[![PyPI version](https://badge.fury.io/py/gonagi-saa.svg)](https://badge.fury.io/py/gonagi-saa)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 AWS SAA (Solutions Architect Associate) 시험 대비를 위한 **멀티모달 Q&A CLI 도구**
 
 ## ✨ 주요 기능
@@ -12,26 +16,44 @@ AWS SAA (Solutions Architect Associate) 시험 대비를 위한 **멀티모달 Q
 - **파일 경로 자동완성:** 이미지 경로 입력 시 Tab 키로 자동완성 지원
 - **비전 모델 자동 감지:** 이미지 미지원 모델 사용 시 자동으로 텍스트만 처리
 
+### 📸 실행 화면
+
+<img src="https://i.imgur.com/uMhjWOF.png" width="400">
+
 ## 📦 설치 방법
 
-이 도구는 `uv`를 사용하여 설치하는 것을 권장합니다.
+### PyPI에서 설치 (권장)
 
-1.  **uv 설치** (macOS, Linux):
+가장 간단한 방법입니다:
 
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
+```bash
+# uvx 사용 (설치 없이 바로 실행)
+uvx gonagi-saa
 
-    다른 운영체제는 [uv 공식 문서](https://github.com/astral-sh/uv#installation) 참고
+# 또는 pip으로 설치
+pip install gonagi-saa
+```
 
-2.  **gonagi-saa 설치**:
+**uv가 없다면:**
+```bash
+# macOS, Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
-    ```bash
-    # GitHub에서 직접 설치
-    git clone https://github.com/YOUR_USERNAME/Gonagi-SAA.git
-    cd Gonagi-SAA
-    uv sync
-    ```
+# Windows
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+다른 운영체제는 [uv 공식 문서](https://github.com/astral-sh/uv#installation) 참고
+
+### 개발용 설치 (GitHub)
+
+코드를 수정하거나 최신 개발 버전을 사용하려면:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/Gonagi-SAA.git
+cd Gonagi-SAA
+uv sync
+```
 
 ## ⚙️ 설정
 
@@ -86,29 +108,30 @@ export EDITOR="code --wait"
 
 ## 💡 사용 방법
 
-**💡 추천:** 매번 `uv run`을 타이핑하기 번거롭다면 alias를 추가하세요:
+**💡 설치 방법별 실행:**
 
+- **PyPI 설치:** `gonagi-saa` 바로 실행
+- **GitHub 설치:** `uv run gonagi-saa` 또는 아래 alias 설정
+
+**GitHub 설치 시 alias 추천:**
 ```bash
 # ~/.bashrc 또는 ~/.zshrc에 추가
 alias gonagi-saa='uv run gonagi-saa'
-
 # 또는 더 짧게
 alias gsaa='uv run gonagi-saa'
 ```
-
-이후 `gonagi-saa` 또는 `gsaa`로 바로 실행할 수 있습니다.
 
 ### 기본 사용 (텍스트만)
 
 ```bash
 gonagi-saa
-# 또는
-uv run gonagi-saa
 ```
 
 1. 편집기가 열리면 질문 입력 후 저장
 2. AI가 답변 생성
 3. 답변 확인 후 Notion 저장 여부 선택
+
+<img src="https://i.imgur.com/ndPPJhs.png" width="400">
 
 ### 이미지 포함 질문
 
@@ -191,6 +214,11 @@ Notion에 저장되는 페이지 구조:
 - 흔한 실수
 - 함정 선택지
 ```
+
+**이미지 포함 질문 저장 예시:**
+
+<img src="https://i.imgur.com/alg285L.png" width="400">
+
 
 ## 🔧 Notion 설정
 
