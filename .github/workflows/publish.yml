@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'  # v0.1.0, v0.2.0 등의 태그가 push될 때 실행
 
+permissions:
+  contents: write  # GitHub Release 생성 권한
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
