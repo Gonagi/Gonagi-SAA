@@ -81,7 +81,7 @@ def config_init():
 @config_app.command("clean")
 def config_clean():
     """설정 파일을 삭제합니다."""
-    confirm = typer.confirm("정말로 설정을 초기화 하시겠습니까?")
+    confirm = typer.confirm("정말로 설정을 초기화 하시겠습니까? [Y/N]", show_default=False)
     if not confirm:
         typer.echo("삭제가 취소되었습니다.")
         raise typer.Exit()
@@ -117,7 +117,7 @@ def ask():
 
     # 2. 이미지 추가 여부 확인
     image_paths: list[str] = []
-    add_images = typer.confirm("📸 이미지를 추가하시겠습니까?", default=False)
+    add_images = typer.confirm("📸 이미지를 추가하시겠습니까? [Y/N]", default=False, show_default=False)
 
     if add_images:
         if not is_vision_model(model):
@@ -186,8 +186,9 @@ def ask():
 
     # 5. Notion 저장 여부 확인
     save_to_notion_confirm = typer.confirm(
-        "💾 Notion에 저장하시겠습니까?",
+        "💾 Notion에 저장하시겠습니까? [Y/N]",
         default=True,
+        show_default=False,
     )
 
     if save_to_notion_confirm:
