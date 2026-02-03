@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     anthropic_api_key: SecretStr = SecretStr("")
     openai_api_key: SecretStr = SecretStr("")
     google_api_key: SecretStr = SecretStr("")
-    imgur_client_id: SecretStr = SecretStr("")
+    imgbb_api_key: SecretStr = SecretStr("")
 
     @classmethod
     def settings_customise_sources(

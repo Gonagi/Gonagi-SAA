@@ -97,25 +97,25 @@ def prepare_image_content(image_path: str) -> dict[str, Any]:
     }
 
 
-def upload_image_to_imgur(image_path: str, client_id: str) -> str:
+def upload_image_to_imgbb(image_path: str, api_key: str) -> str:
     """
-    이미지를 Imgur에 업로드하고 URL 반환
+    이미지를 imgbb에 업로드하고 URL 반환
 
-    기본적으로 Hidden 상태로 업로드됨:
-    - URL을 아는 사람만 접근 가능
-    - Imgur 갤러리나 검색에 나오지 않음
-    - 실질적으로 비공개
+    imgbb 무료 tier:
+    - 파일 크기: 최대 32MB
+    - 만료: 없음 (영구 저장)
+    - 비공개 업로드 (URL을 아는 사람만 접근)
 
     Args:
         image_path: 업로드할 이미지 파일 경로
-        client_id: Imgur Client ID
+        api_key: imgbb API Key
 
     Returns:
         업로드된 이미지의 URL
 
     Raises:
         FileNotFoundError: 이미지 파일을 찾을 수 없는 경우
-        requests.HTTPError: Imgur API 요청 실패
+        requests.HTTPError: imgbb API 요청 실패
     """
     path = Path(image_path)
     if not path.exists():
@@ -125,20 +125,16 @@ def upload_image_to_imgur(image_path: str, client_id: str) -> str:
     with open(path, "rb") as image_file:
         image_data = base64.b64encode(image_file.read()).decode("utf-8")
 
-    # Imgur API 요청
-    url = "https://api.imgur.com/3/image"
-    headers = {
-        "Authorization": f"Client-ID {client_id}"
-    }
+    # imgbb API 요청
+    url = "https://api.imgbb.com/1/upload"
     data = {
+        "key": api_key,
         "image": image_data,
-        "type": "base64",
-        # 기본값으로 hidden (URL을 아는 사람만 접근)
     }
 
-    response = requests.post(url, headers=headers, data=data)
+    response = requests.post(url, data=data)
     response.raise_for_status()
 
     # 업로드된 이미지 URL 반환
     result = response.json()
-    return result["data"]["link"]
+    return result["data"]["url"]

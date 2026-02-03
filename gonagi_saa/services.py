@@ -9,7 +9,7 @@ from notion_client import Client as NotionClient
 from notionize import notionize
 
 from gonagi_saa.models import QnAModel
-from gonagi_saa.utils import llm_model_factory, prepare_image_content, upload_image_to_imgur
+from gonagi_saa.utils import llm_model_factory, prepare_image_content, upload_image_to_imgbb
 from gonagi_saa.settings import settings
 
 
@@ -97,18 +97,18 @@ def save_to_notion(
 
     # 이미지 업로드 및 추가
     if image_paths:
-        imgur_client_id = settings.imgur_client_id.get_secret_value()
+        imgbb_api_key = settings.imgbb_api_key.get_secret_value()
 
-        if not imgur_client_id:
-            print("⚠️  Imgur Client ID가 설정되지 않았습니다. 이미지를 건너뜁니다.")
+        if not imgbb_api_key:
+            print("⚠️  imgbb API Key가 설정되지 않았습니다. 이미지를 건너뜁니다.")
         else:
             for image_path in image_paths:
                 path = Path(image_path)
                 if path.exists():
                     try:
-                        print(f"📤 이미지를 Imgur에 업로드 중: {path.name}")
-                        # Imgur에 이미지 업로드 (Hidden 상태)
-                        image_url = upload_image_to_imgur(str(path), imgur_client_id)
+                        print(f"📤 이미지를 imgbb에 업로드 중: {path.name}")
+                        # imgbb에 이미지 업로드
+                        image_url = upload_image_to_imgbb(str(path), imgbb_api_key)
                         print(f"✅ 업로드 완료: {image_url}")
 
                         # Notion image 블록 추가
