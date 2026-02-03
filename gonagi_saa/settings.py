@@ -33,13 +33,22 @@ class Settings(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> tuple[PydanticBaseSettingsSource, ...]:
-        return (
+        sources = [
             init_settings,
             env_settings,
             dotenv_settings,
             file_secret_settings,
-            JsonConfigSettingsSource(settings_cls),
-        )
+        ]
+
+        # 설정 파일이 존재하고 비어있지 않은 경우에만 JSON 설정 로드
+        if CONFIG_FILE.exists() and CONFIG_FILE.stat().st_size > 0:
+            try:
+                sources.append(JsonConfigSettingsSource(settings_cls))
+            except Exception:
+                # 유효하지 않은 JSON 파일이면 무시하고 기본값 사용
+                pass
+
+        return tuple(sources)
 
 
 settings = Settings()
