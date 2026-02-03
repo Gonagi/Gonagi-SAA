@@ -161,6 +161,10 @@ def save_to_notion(
     )
 
     # 답변 블록 구성 (구조화된 형식)
+    # 리스트를 마크다운 문자열로 변환
+    exam_tips_text = "\n".join(qna.exam_tips)
+    common_traps_text = "\n".join(qna.common_traps)
+
     answer_content = dedent(
         f"""\
         ## 답변
@@ -169,11 +173,11 @@ def save_to_notion(
 
         ### 📝 시험 팁
 
-        {qna.exam_tips}
+        {exam_tips_text}
 
-        ### ⚠️ 주의사항 (흔한 함정)
+        ### ⚠️ 주의사항
 
-        {qna.common_traps}
+        {common_traps_text}
         """
     )
     children.extend(notionize(answer_content))

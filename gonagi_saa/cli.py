@@ -7,6 +7,8 @@ from typing import cast
 
 import typer
 from notion_client import Client as NotionClient
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import PathCompleter
 
 from gonagi_saa.settings import CONFIG_DIR, CONFIG_FILE, settings
 from gonagi_saa.services import answer_question, save_to_notion
@@ -143,16 +145,24 @@ def ask():
             )
             typer.echo("텍스트만으로 진행합니다.")
         else:
+            # PathCompleter로 파일 경로 자동완성 지원
+            path_completer = PathCompleter(expanduser=True)
+
             for i in range(MAX_IMAGES):
-                image_path = typer.prompt(
-                    f"이미지 경로를 입력하세요 ({i + 1}/{MAX_IMAGES}, 종료하려면 Enter)",
-                    default="",
-                    show_default=False,
-                )
-                if image_path.strip() == "":
+                try:
+                    # prompt_toolkit의 prompt 사용 (Tab 자동완성 지원)
+                    image_path = prompt(
+                        f"이미지 경로를 입력하세요 ({i + 1}/{MAX_IMAGES}, 종료하려면 Enter): ",
+                        completer=path_completer,
+                    ).strip()
+                except (KeyboardInterrupt, EOFError):
+                    # Ctrl+C 또는 Ctrl+D 입력 시 종료
                     break
 
-                path = Path(image_path.strip())
+                if image_path == "":
+                    break
+
+                path = Path(image_path)
                 if not path.exists():
                     typer.secho(
                         f"❌ 이미지 파일을 찾을 수 없습니다: {image_path}",
@@ -183,7 +193,13 @@ def ask():
     print(f"📌 제목: {result.title}")
     print(f"{'='*60}\n")
     print(f"💡 답변:\n\n{result.answer}\n")
-    print(f"🏷️  태그: {', '.join(result.tags)}\n")
+    print(f"\n📝 시험 팁:")
+    for tip in result.exam_tips:
+        print(f"  {tip}")
+    print(f"\n⚠️  주의사항:")
+    for trap in result.common_traps:
+        print(f"  {trap}")
+    print(f"\n🏷️  태그: {', '.join(result.tags)}\n")
     print(f"{'='*60}\n")
 
     # 5. Notion 저장 여부 확인
