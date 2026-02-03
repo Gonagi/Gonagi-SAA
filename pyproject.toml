@@ -4,6 +4,18 @@ version = "0.1.0"
 description = "AWS SAA 시험 대비를 위한 멀티모달 Q&A CLI 도구"
 readme = "README.md"
 requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+    {name = "Gonagi", email = "kkh10002@naver.com"}
+]
+keywords = ["aws", "saa", "study", "notion", "cli", "ai", "multimodal"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+]
 dependencies = [
     "langchain>=0.3.25",
     "langchain-anthropic>=0.3.12",
@@ -30,7 +42,6 @@ target-version = "py312"
 
 [project.scripts]
 gonagi-saa = "gonagi_saa.cli:app"
-prepsaa = "prepsaa.cli:app"
 
 [build-system]
 requires = ['hatchling', 'hatch-fancy-pypi-readme>=22.5.0']
