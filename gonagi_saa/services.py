@@ -89,13 +89,14 @@ def save_to_notion(
     """질문-답변을 Notion에 저장 (이미지 포함)"""
     print("🔥 Notion에 저장합니다...")
 
-    # 본문 구성: 질문 + 답변
-    content = f"## 질문\n\n{qna.question}\n\n## 답변\n\n{qna.answer}"
+    # 질문과 답변을 별도로 변환
+    question_content = f"## 질문\n\n{qna.question}"
+    answer_content = f"## 답변\n\n{qna.answer}"
 
-    # 마크다운 -> Notion 블록 변환
-    children = notionize(content)
+    # 질문 블록 변환
+    children = notionize(question_content)
 
-    # 이미지 업로드 및 추가
+    # 이미지를 질문 바로 아래에 추가
     if image_paths:
         imgbb_api_key = settings.imgbb_api_key.get_secret_value()
 
@@ -111,7 +112,7 @@ def save_to_notion(
                         image_url = upload_image_to_imgbb(str(path), imgbb_api_key)
                         print(f"✅ 업로드 완료: {image_url}")
 
-                        # Notion image 블록 추가
+                        # Notion image 블록 추가 (질문 바로 아래)
                         children.append(
                             {
                                 "object": "block",
@@ -141,6 +142,9 @@ def save_to_notion(
                                 },
                             }
                         )
+
+    # 답변 블록을 마지막에 추가
+    children.extend(notionize(answer_content))
 
     # Notion 페이지 생성
     notion_client.pages.create(
