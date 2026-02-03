@@ -31,69 +31,51 @@ def config_path():
 
 @config_app.command("init")
 def config_init():
-    """설정 파일을 초기화합니다."""
-    CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    """설정 파일을 생성하거나 에디터로 엽니다."""
+    # 설정 파일이 없으면 템플릿 생성
+    if not CONFIG_FILE.exists():
+        CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 
-    if CONFIG_FILE.exists():
-        overwrite = typer.confirm("설정 파일이 이미 존재합니다. 덮어쓰시겠습니까?")
-        if not overwrite:
-            typer.echo("초기화를 취소합니다.")
-            raise typer.Exit()
+        # 기본 템플릿 생성
+        template = {
+            "default_model": "gpt-4o",
+            "notion_database_id": "",
+            "notion_api_key": "",
+            "anthropic_api_key": "",
+            "openai_api_key": "",
+            "google_api_key": "",
+            "imgbb_api_key": "",
+        }
 
-    CONFIG_FILE.touch(exist_ok=True)
-    os.chmod(CONFIG_FILE, 0o600)
+        with open(CONFIG_FILE, "w") as f:
+            f.write(json.dumps(template, indent=2))
 
-    default_model = typer.prompt(
-        "기본 모델을 입력하세요 (예: gpt-4o, claude-3-5-sonnet-20241022, gemini-2.5-flash)",
-        default="gpt-4o",
-    )
-    notion_db_id = typer.prompt(
-        "Notion DB ID를 입력하세요",
-        default="",
-    )
-    notion_api_key = typer.prompt(
-        "Notion API Key를 입력하세요",
-        default="",
-        show_default=False,
-    )
-    anthropic_api_key = typer.prompt(
-        "Anthropic API Key를 입력하세요",
-        default="",
-        show_default=False,
-    )
-    openai_api_key = typer.prompt(
-        "OpenAI API Key를 입력하세요",
-        default="",
-        show_default=False,
-    )
-    google_api_key = typer.prompt(
-        "Google API Key를 입력하세요",
-        default="",
-        show_default=False,
-    )
-    imgbb_api_key = typer.prompt(
-        "imgbb API Key를 입력하세요 (이미지 업로드용)",
-        default="",
-        show_default=False,
-    )
+        os.chmod(CONFIG_FILE, 0o600)
+        typer.echo("✅ 설정 파일 템플릿이 생성되었습니다.")
 
-    config_data = {
-        "default_model": default_model,
-        "notion_database_id": notion_db_id,
-        "notion_api_key": notion_api_key,
-        "anthropic_api_key": anthropic_api_key,
-        "openai_api_key": openai_api_key,
-        "google_api_key": google_api_key,
-        "imgbb_api_key": imgbb_api_key,
-    }
+    # 에디터로 파일 열기
+    try:
+        editor = os.environ.get("EDITOR", os.environ.get("VISUAL", "vi"))
 
-    with open(CONFIG_FILE, "w") as f:
-        f.write(json.dumps(config_data, indent=2))
+        typer.echo(f"📝 설정 파일을 {editor}로 엽니다: {CONFIG_FILE}")
+        typer.echo("💡 팁: API Key는 따옴표로 감싸주세요.")
 
-    typer.secho(
-        "✅ 성공적으로 설정이 저장되었습니다.",
-        fg=typer.colors.GREEN,
-    )
+        # 에디터 실행
+        exit_code = os.system(f'{editor} "{CONFIG_FILE}"')
+
+        if exit_code == 0:
+            typer.secho("✅ 설정 파일이 저장되었습니다.", fg=typer.colors.GREEN)
+        else:
+            typer.secho("⚠️  에디터가 비정상 종료되었습니다.", fg=typer.colors.YELLOW)
+
+    except Exception as e:
+        typer.secho(
+            f"❌ 에디터 실행 중 오류가 발생했습니다: {e}",
+            fg=typer.colors.RED,
+            err=True,
+        )
+        typer.echo(f"수동으로 파일을 수정하세요: {CONFIG_FILE}")
+        raise typer.Exit(code=1)
 
 
 @config_app.command("clean")
