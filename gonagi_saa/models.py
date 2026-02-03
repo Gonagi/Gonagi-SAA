@@ -23,12 +23,39 @@ class QnAModel(BaseModel):
     answer: str = Field(
         description=dedent(
             """\
-            질문에 대한 상세한 답변.
-            - AWS SAA 시험 준비를 위한 명확하고 구조화된 설명
-            - 필요시 예시, 비교, 주의사항 포함
+            질문에 대한 핵심 개념 설명.
+            - 명확하고 간결한 설명
+            - 주요 특징과 작동 원리
+            - 필요시 예시 포함
             - 한국어로 작성
             """
         ),
+    )
+
+    exam_tips: str = Field(
+        description=dedent(
+            """\
+            AWS SAA 시험 관련 팁과 중요 포인트.
+            - 시험에 자주 나오는 유형
+            - 정답을 고르는 핵심 키워드
+            - 주의해야 할 특징들
+            - 마크다운 리스트 형식으로 작성
+            """
+        ),
+        examples=["- 비용 최적화 문제에서는 S3 Intelligent-Tiering 고려\n- '실시간'이라는 키워드가 나오면 Kinesis 선택"],
+    )
+
+    common_traps: str = Field(
+        description=dedent(
+            """\
+            시험에서 자주 나오는 함정과 오답.
+            - 헷갈리기 쉬운 유사 서비스/개념
+            - 흔히 실수하는 부분
+            - 틀린 선택지의 특징
+            - 마크다운 리스트 형식으로 작성
+            """
+        ),
+        examples=["- CloudWatch와 CloudTrail 혼동 주의\n- S3 Standard-IA는 30일 이상 보관 시 적합"],
     )
 
     tags: list[str] = Field(

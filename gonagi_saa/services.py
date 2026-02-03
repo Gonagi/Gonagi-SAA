@@ -24,10 +24,21 @@ def answer_question(
     # 프롬프트 구성
     system_prompt = dedent(
         """\
-        You are a helpful assistant that answers questions about AWS SAA (Solutions Architect Associate) exam preparation.
+        You are an AWS SAA (Solutions Architect Associate) exam preparation expert.
 
-        Provide clear, structured, and detailed explanations in Korean.
-        Include practical examples and important considerations when relevant.
+        Provide clear, well-structured answers in Korean with the following components:
+
+        1. **answer**: Core concept explanation - clear and concise with key features and how it works
+        2. **exam_tips**: Exam-specific tips including:
+           - Common question patterns in the exam
+           - Key keywords that indicate the correct answer
+           - Important characteristics to remember
+        3. **common_traps**: Common pitfalls and wrong answer patterns:
+           - Easily confused similar services/concepts
+           - Typical mistakes candidates make
+           - Characteristics of incorrect choices
+
+        Write in Korean and use markdown formatting (bullet points, bold text) for readability.
 
         {format_instructions}
         """
@@ -89,11 +100,8 @@ def save_to_notion(
     """질문-답변을 Notion에 저장 (이미지 포함)"""
     print("🔥 Notion에 저장합니다...")
 
-    # 질문과 답변을 별도로 변환
+    # 질문 블록 구성
     question_content = f"## 질문\n\n{qna.question}"
-    answer_content = f"## 답변\n\n{qna.answer}"
-
-    # 질문 블록 변환
     children = notionize(question_content)
 
     # 이미지를 질문 바로 아래에 추가
@@ -143,7 +151,31 @@ def save_to_notion(
                             }
                         )
 
-    # 답변 블록을 마지막에 추가
+    # 이미지와 답변 사이 구분선 추가
+    children.append(
+        {
+            "object": "block",
+            "type": "divider",
+            "divider": {},
+        }
+    )
+
+    # 답변 블록 구성 (구조화된 형식)
+    answer_content = dedent(
+        f"""\
+        ## 답변
+
+        {qna.answer}
+
+        ### 📝 시험 팁
+
+        {qna.exam_tips}
+
+        ### ⚠️ 주의사항 (흔한 함정)
+
+        {qna.common_traps}
+        """
+    )
     children.extend(notionize(answer_content))
 
     # Notion 페이지 생성
