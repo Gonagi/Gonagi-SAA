@@ -160,27 +160,37 @@ def save_to_notion(
         }
     )
 
-    # 답변 블록 구성 (구조화된 형식)
-    # 리스트를 마크다운 문자열로 변환
-    exam_tips_text = "\n".join(qna.exam_tips)
-    common_traps_text = "\n".join(qna.common_traps)
-
-    answer_content = dedent(
-        f"""\
-        ## 답변
-
-        {qna.answer}
-
-        ### 📝 시험 팁
-
-        {exam_tips_text}
-
-        ### ⚠️ 주의사항
-
-        {common_traps_text}
-        """
-    )
+    # 답변 섹션
+    answer_content = f"## 답변\n\n{qna.answer}"
     children.extend(notionize(answer_content))
+
+    # 구분선 추가
+    children.append(
+        {
+            "object": "block",
+            "type": "divider",
+            "divider": {},
+        }
+    )
+
+    # 시험 팁 섹션
+    exam_tips_text = "\n".join(qna.exam_tips)
+    exam_tips_content = f"### 📝 시험 팁\n\n{exam_tips_text}"
+    children.extend(notionize(exam_tips_content))
+
+    # 구분선 추가
+    children.append(
+        {
+            "object": "block",
+            "type": "divider",
+            "divider": {},
+        }
+    )
+
+    # 주의사항 섹션
+    common_traps_text = "\n".join(qna.common_traps)
+    common_traps_content = f"### ⚠️ 주의사항\n\n{common_traps_text}"
+    children.extend(notionize(common_traps_content))
 
     # Notion 페이지 생성
     notion_client.pages.create(
