@@ -27,8 +27,12 @@ AWS SAA (Solutions Architect Associate) 시험 대비를 위한 **멀티모달 Q
 가장 간단한 방법입니다:
 
 ```bash
-# uvx 사용 (설치 없이 바로 실행)
+# uvx 사용 (설치 없이 일회성 실행)
 uvx gonagi-saa
+
+# uv tool install (영구 설치 - 권장)
+# 설치 후 바로 gonagi-saa 명령어 사용 가능
+uv tool install gonagi-saa
 
 # 또는 pip으로 설치
 pip install gonagi-saa
@@ -110,7 +114,8 @@ export EDITOR="code --wait"
 
 **💡 설치 방법별 실행:**
 
-- **PyPI 설치:** `gonagi-saa` 바로 실행
+- **uv tool install / pip 설치:** `gonagi-saa` 바로 실행
+- **uvx 사용:** 매번 `uvx gonagi-saa` 입력
 - **GitHub 설치:** `uv run gonagi-saa` 또는 아래 alias 설정
 
 **GitHub 설치 시 alias 추천:**
