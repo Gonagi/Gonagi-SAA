@@ -5,6 +5,7 @@ import time
 from pathlib import Path
 from typing import cast
 
+import filetype
 import typer
 from notion_client import Client as NotionClient
 from prompt_toolkit import prompt
@@ -148,6 +149,22 @@ def ask():
                 if not path.exists():
                     typer.secho(
                         f"❌ 이미지 파일을 찾을 수 없습니다: {image_path}",
+                        fg=typer.colors.RED,
+                    )
+                    continue
+
+                if not path.is_file():
+                    typer.secho(
+                        f"❌ 디렉토리가 아닌 파일을 입력해주세요: {image_path}",
+                        fg=typer.colors.RED,
+                    )
+                    continue
+
+                # 이미지 파일 타입 확인
+                kind = filetype.guess(str(path))
+                if kind is None or not kind.mime.startswith("image/"):
+                    typer.secho(
+                        f"❌ 이미지 파일이 아닙니다: {image_path}",
                         fg=typer.colors.RED,
                     )
                     continue
