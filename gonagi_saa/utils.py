@@ -1,5 +1,6 @@
 import re
 import base64
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -138,3 +139,16 @@ def upload_image_to_imgbb(image_path: str, api_key: str) -> str:
     # 업로드된 이미지 URL 반환
     result = response.json()
     return result["data"]["url"]
+
+
+def generate_session_id() -> str:
+    """
+    현재 시간 기반 Session ID 생성
+
+    형식: YYYY-MM-DD-HH:MM
+    예: 2026-02-11-15:30
+
+    Returns:
+        Session ID 문자열
+    """
+    return datetime.now().strftime("%Y-%m-%d-%H:%M")

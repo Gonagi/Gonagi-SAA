@@ -13,7 +13,7 @@ from prompt_toolkit.completion import PathCompleter
 
 from gonagi_saa.settings import CONFIG_DIR, CONFIG_FILE, settings
 from gonagi_saa.services import answer_question, save_to_notion
-from gonagi_saa.utils import is_vision_model
+from gonagi_saa.utils import is_vision_model, generate_session_id
 from gonagi_saa.constants import MAX_IMAGES
 
 app = typer.Typer()
@@ -106,6 +106,10 @@ def config_clean():
 def ask():
     """질문을 입력받아 답변을 생성하고, Notion에 저장할 수 있습니다."""
     model = settings.default_model
+
+    # Session ID 생성 및 표시
+    session_id = generate_session_id()
+    typer.secho(f"🔗 Session: {session_id}", fg=typer.colors.CYAN)
 
     # 1. 텍스트 질문 입력
     print("💡 질문을 입력하고 저장하세요!")
