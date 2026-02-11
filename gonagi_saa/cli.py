@@ -225,7 +225,7 @@ def ask():
             notion_client = NotionClient(
                 auth=settings.notion_api_key.get_secret_value()
             )
-            save_to_notion(notion_client, result, image_paths if image_paths else None)
+            save_to_notion(notion_client, result, session_id, image_paths if image_paths else None)
         except Exception as e:
             typer.secho(
                 f"❌ Notion 저장 중 오류가 발생했습니다: {e}",

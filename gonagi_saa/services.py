@@ -95,6 +95,7 @@ def answer_question(
 def save_to_notion(
     notion_client: NotionClient,
     qna: QnAModel,
+    session_id: str,
     image_paths: list[str] | None = None,
 ) -> None:
     """질문-답변을 Notion에 저장 (이미지 포함)"""
@@ -207,6 +208,14 @@ def save_to_notion(
             },
             "Tags": {
                 "multi_select": [{"name": tag} for tag in qna.tags]
+            },
+            "Session": {
+                "rich_text": [
+                    {
+                        "type": "text",
+                        "text": {"content": session_id},
+                    }
+                ]
             },
         },
         children=children,
