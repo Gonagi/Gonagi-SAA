@@ -131,19 +131,27 @@ def ask():
             # PathCompleter로 파일 경로 자동완성 지원
             path_completer = PathCompleter(expanduser=True)
 
+            typer.echo("💡 이미지를 추가하세요 (최대 3개, Enter=종료, q=취소)\n")
+
             for i in range(MAX_IMAGES):
                 try:
                     # prompt_toolkit의 prompt 사용 (Tab 자동완성 지원)
                     image_path = prompt(
-                        f"이미지 경로를 입력하세요 ({i + 1}/{MAX_IMAGES}, 종료하려면 Enter): ",
+                        f"이미지 경로 ({i + 1}/{MAX_IMAGES}): ",
                         completer=path_completer,
                     ).strip()
                 except (KeyboardInterrupt, EOFError):
-                    # Ctrl+C 또는 Ctrl+D 입력 시 종료
-                    break
+                    # Ctrl+C 또는 Ctrl+D 입력 시 전체 프로세스 중단
+                    typer.echo("\n👋 질문이 취소되었습니다.")
+                    raise typer.Exit()
 
                 if image_path == "":
                     break
+
+                # 취소 명령어 처리
+                if image_path.lower() in ["q", "quit", "cancel", "exit"]:
+                    typer.echo("👋 질문이 취소되었습니다.")
+                    raise typer.Exit()
 
                 path = Path(image_path)
                 if not path.exists():
