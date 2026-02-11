@@ -17,8 +17,9 @@ def answer_question(
     model_name: str,
     question: str,
     image_paths: list[str] | None = None,
+    history: list[QnAModel] | None = None,
 ) -> QnAModel:
-    """질문에 대한 답변 생성 (텍스트 + 이미지 지원)"""
+    """질문에 대한 답변 생성 (텍스트 + 이미지 지원, 대화 히스토리 포함)"""
     parser = PydanticOutputParser(pydantic_object=QnAModel)
 
     # 프롬프트 구성
@@ -44,26 +45,27 @@ def answer_question(
         """
     )
 
-    # 멀티모달 메시지 구성
+    # 메시지 구성 (히스토리 + 현재 질문)
+    messages: list = [("system", system_prompt)]
+
+    # 대화 히스토리 추가
+    if history:
+        for prev_qna in history:
+            messages.append(("human", prev_qna.question))
+            messages.append(("assistant", prev_qna.answer))
+
+    # 현재 질문 추가
     if image_paths:
         # 이미지가 있는 경우: HumanMessage content를 리스트로 구성
         content_parts: list[dict | str] = [{"type": "text", "text": question}]
         for image_path in image_paths:
             content_parts.append(prepare_image_content(image_path))
-
-        messages = [
-            ("system", system_prompt),
-            HumanMessage(content=content_parts),
-        ]
-        prompt = ChatPromptTemplate.from_messages(messages)
+        messages.append(HumanMessage(content=content_parts))
     else:
         # 텍스트만 있는 경우
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                ("system", system_prompt),
-                ("human", "{question}"),
-            ]
-        )
+        messages.append(("human", "{question}"))
+
+    prompt = ChatPromptTemplate.from_messages(messages)
 
     model = llm_model_factory(model_name)
     chain = prompt | model | parser
@@ -102,7 +104,7 @@ def save_to_notion(
     print("🔥 Notion에 저장합니다...")
 
     # 질문 블록 구성 (코드 블록으로 감싸서 개행 유지)
-    question_content = f"## 질문\n\n```\n{qna.question}\n```"
+    question_content = f"## 질문\n\n```\n{qna.question.rstrip()}\n```"
     children = notionize(question_content)
 
     # 이미지를 질문 바로 아래에 추가
