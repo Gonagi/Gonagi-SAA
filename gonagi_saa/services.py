@@ -100,8 +100,8 @@ def save_to_notion(
     """질문-답변을 Notion에 저장 (이미지 포함)"""
     print("🔥 Notion에 저장합니다...")
 
-    # 질문 블록 구성
-    question_content = f"## 질문\n\n{qna.question}"
+    # 질문 블록 구성 (코드 블록으로 감싸서 개행 유지)
+    question_content = f"## 질문\n\n```\n{qna.question}\n```"
     children = notionize(question_content)
 
     # 이미지를 질문 바로 아래에 추가
