@@ -10,6 +10,8 @@ AWS SAA (Solutions Architect Associate) 시험 대비를 위한 **멀티모달 Q
 
 - **멀티모달 Q&A:** 텍스트 질문뿐만 아니라 이미지(스크린샷, 다이어그램 등)를 함께 입력하여 답변 생성
 - **시험 대비 구조화된 답변:** 핵심 답변 + 시험 팁 + 주의사항(함정) 자동 생성
+- **이어서 질문하기:** 하나의 세션에서 연속적으로 질문 가능, 이전 대화를 기반으로 답변 생성
+- **Session 관리:** 같은 세션의 Q&A를 Notion에서 추적 및 필터링 가능
 - **LLM 통합:** OpenAI GPT, Anthropic Claude, Google Gemini 모델 지원
 - **자동 태그 추출:** AI가 답변에서 주요 기술/서비스/개념을 자동으로 태그로 추출
 - **Notion 연동:** 질문, 답변, 시험 팁, 주의사항을 Notion 데이터베이스에 자동 저장
@@ -18,7 +20,13 @@ AWS SAA (Solutions Architect Associate) 시험 대비를 위한 **멀티모달 Q
 
 ### 📸 실행 화면
 
-<img src="https://i.imgur.com/uMhjWOF.png" width="400">
+**기본 사용 화면**
+
+<img src="https://i.imgur.com/Qe57kLz.png" width="400">
+
+**이미지 포함 질문**
+
+<img src="https://i.imgur.com/6ziPkvm.png" width="400">
 
 ## 📦 설치 방법
 
@@ -132,11 +140,11 @@ alias gsaa='uv run gonagi-saa'
 gonagi-saa
 ```
 
-1. 편집기가 열리면 질문 입력 후 저장
-2. AI가 답변 생성
-3. 답변 확인 후 Notion 저장 여부 선택
-
-<img src="https://i.imgur.com/ndPPJhs.png" width="400">
+1. Session ID 표시
+2. 편집기가 열리면 질문 입력 후 저장
+3. AI가 답변 생성
+4. 답변 확인 후 Notion 저장 여부 선택
+5. 이어서 질문할지 선택
 
 ### 이미지 포함 질문
 
@@ -152,16 +160,17 @@ gonagi-saa
 
 ### 예시 워크플로우
 
+**기본 질문 + 이어서 질문하기:**
+
 ```bash
 $ gonagi-saa
+
+🔗 Session: 2026-02-11-15:30
 
 💡 질문을 입력하고 저장하세요!
 # 편집기에서 질문 작성: "VPC와 Subnet의 차이점이 무엇인가요?"
 
-📸 이미지를 추가하시겠습니까? [Y/N]: Y
-이미지 경로를 입력하세요 (1/3, 종료하려면 Enter): ./vpc-diagram.png
-# Tab 키로 파일명 자동완성 가능
-✅ 이미지 추가됨: vpc-diagram.png
+📸 이미지를 추가하시겠습니까? [Y/N]: N
 
 🔥 질문에 대한 답변을 생성합니다...
 
@@ -187,6 +196,53 @@ VPC(Virtual Private Cloud)와 Subnet은 AWS의 네트워킹 구성 요소입니�
 ============================================================
 
 💾 Notion에 저장하시겠습니까? [Y/N]: Y
+
+🔥 Notion에 저장합니다...
+✅ Notion에 저장되었습니다!
+
+🔄 이어서 질문하시겠습니까? [Y/N]: Y
+
+💡 질문을 입력하고 저장하세요!
+# 편집기에서 질문 작성: "그럼 Private Subnet에서 인터넷 접근은 어떻게 하나요?"
+
+📸 이미지를 추가하시겠습니까? [Y/N]: N
+
+🔥 질문에 대한 답변을 생성합니다...
+# 이전 Q&A(VPC/Subnet)를 참고하여 답변 생성
+
+============================================================
+📌 제목: Private Subnet 인터넷 접근 방법
+============================================================
+
+💡 답변:
+
+앞서 설명드린 Private Subnet은 직접적인 인터넷 접근이 불가능하지만,
+NAT Gateway를 통해 아웃바운드 인터넷 접근이 가능합니다...
+
+💾 Notion에 저장하시겠습니까? [Y/N]: Y
+✅ Notion에 저장되었습니다!
+
+🔄 이어서 질문하시겠습니까? [Y/N]: N
+👋 종료합니다.
+```
+
+**이미지 포함 질문:**
+
+```bash
+$ gonagi-saa
+
+🔗 Session: 2026-02-11-16:00
+
+📸 이미지를 추가하시겠습니까? [Y/N]: Y
+
+💡 이미지를 추가하세요 (최대 3개, Enter=종료, q=취소)
+
+이미지 경로 (1/3): ./vpc-diagram.png
+# Tab 키로 파일명 자동완성 가능
+✅ 이미지 추가됨: vpc-diagram.png
+
+이미지 경로 (2/3):
+# Enter로 종료
 
 🔥 Notion에 저장합니다...
 📤 이미지를 imgbb에 업로드 중: vpc-diagram.png
@@ -220,10 +276,9 @@ Notion에 저장되는 페이지 구조:
 - 함정 선택지
 ```
 
-**이미지 포함 질문 저장 예시:**
+**Session 관리:**
 
-<img src="https://i.imgur.com/alg285L.png" width="400">
-
+같은 세션의 Q&A는 동일한 Session ID를 가집니다 (예: `2026-02-11-15:30`). Notion 데이터베이스에서 Session 필드로 필터링하면 관련된 대화를 한눈에 볼 수 있습니다.
 
 ## 🔧 Notion 설정
 
@@ -240,6 +295,7 @@ Notion에 저장되는 페이지 구조:
 2. 다음 필드 추가:
    - **title** (제목): 기본 제목 필드
    - **Tags** (다중 선택): AI가 추출한 태그 저장
+   - **Session** (텍스트): 같은 대화 세션 추적용
 
 3. 데이터베이스 우측 상단 `...` → `Connections` → 생성한 Integration 추가
 4. 데이터베이스 ID 복사 (URL에서 확인)
